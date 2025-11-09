@@ -54,4 +54,12 @@ describe('reduce', () => {
   it('throws TypeError if array and initial value are empty', () => {
     expect(() => [].reduce2(sumCb)).toThrow(TypeError);
   });
+
+  it("doesn't call cb for [1] without init", () => {
+    const cb = jest.fn();
+
+    [1].reduce2(cb);
+
+    expect(cb).not.toHaveBeenCalled();
+  });
 });
