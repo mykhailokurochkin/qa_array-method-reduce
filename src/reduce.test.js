@@ -2,7 +2,7 @@
 
 const { reduce } = require('./reduce');
 const arr = [0, 1, 2, 3, 4];
-const sumCb = (acc, current) => acc + current;
+const sumCb = (acc, current, i, array) => acc + current;
 
 describe('reduce', () => {
   beforeAll(() => {
@@ -33,9 +33,25 @@ describe('reduce', () => {
   });
 
   it('should call cb with all params', () => {
-    const cb = jest.fn();
+    const cb = jest.fn(sumCb);
 
     arr.reduce2(cb, 0);
-    expect(cb).toHaveBeenCalledWith(0, 0, 0, arr);
+
+    expect(cb).nthCalledWith(1, 0, 0, 0, arr);
+    expect(cb).nthCalledWith(2, 0, 1, 1, arr);
+    expect(cb).nthCalledWith(3, 1, 2, 2, arr);
+    expect(cb).nthCalledWith(4, 3, 3, 3, arr);
+    expect(cb).nthCalledWith(5, 6, 4, 4, arr);
+  });
+
+  it('should use first element as accumulator if it is not provided', () => {
+    const cb = jest.fn();
+
+    arr.reduce2(cb);
+    expect(cb).nthCalledWith(1, arr[0], arr[1], 1, arr);
+  });
+
+  it('throws TypeError if array and initial value are empty', () => {
+    expect(() => [].reduce2(sumCb)).toThrow(TypeError);
   });
 });
